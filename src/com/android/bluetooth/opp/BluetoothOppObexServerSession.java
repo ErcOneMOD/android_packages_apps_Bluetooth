@@ -290,7 +290,7 @@ public class BluetoothOppObexServerSession extends ServerRequestHandler implemen
         }
         boolean isWhitelisted = BluetoothOppManager.getInstance(mContext).
                 isWhitelisted(destination);
-        boolean isAcceptAllFilesEnabled = Settings.System.getInt(mContext.getContentResolver(),
+        boolean acceptAllFilesIsEnabled = Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.BLUETOOTH_ACCEPT_ALL_FILES, 0) == 1;
 
         try {
@@ -330,7 +330,7 @@ public class BluetoothOppObexServerSession extends ServerRequestHandler implemen
                 obexResponse = ResponseCodes.OBEX_HTTP_BAD_REQUEST;
             }
 
-            if (!isAcceptAllFilesEnabled) {
+            if (!acceptAllFilesIsEnabled) {
                 if (!pre_reject) {
                     /* first we look for Mimetype in Android map */
                     String extension, type;
@@ -359,15 +359,15 @@ public class BluetoothOppObexServerSession extends ServerRequestHandler implemen
                                 obexResponse = ResponseCodes.OBEX_HTTP_UNSUPPORTED_TYPE;
                             }
                         }
-                        if (mimeType != null) {
-                            mimeType = mimeType.toLowerCase();
-                        }
+                    }
+                    if (mimeType != null) {
+                        mimeType = mimeType.toLowerCase();
                     }
                 }
 
                 // Reject policy: anything outside the "white list" plus
-                // unspecified MIME Types.
-                // Also reject everything in the "black list".
+                // unspecified
+                // MIME Types. Also reject everything in the "black list".
                 if (!pre_reject
                         && (mimeType == null
                                 || (!isWhitelisted && !Constants.mimeTypeMatches(mimeType,
@@ -383,7 +383,7 @@ public class BluetoothOppObexServerSession extends ServerRequestHandler implemen
                 }
             } else {
                 if (D)
-                    Log.i(TAG, "isAcceptAllFilesEnabled == true, skipped check of mime type");
+                    Log.i(TAG, "acceptAllFilesIsEnabled is true, skipped check of mime type");
                 if (mimeType == null) {
                     mimeType = "*/*";
                     if (D)
